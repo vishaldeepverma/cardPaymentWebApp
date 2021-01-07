@@ -1,4 +1,5 @@
 import React, { useState, useRef, useCallback } from 'react';
+import Axios from 'axios';
 import CForm from './components/form';
 import Card from './components/card';
 
@@ -8,7 +9,7 @@ const initialState = {
     cardMonth: '',
     cardYear: '',
     cardCvv: '',
-    isCardFlipped: false
+    isCardFlipped: false,
 };
 
 const MainScreen = () => {
@@ -19,7 +20,7 @@ const MainScreen = () => {
         (keyName, value) => {
             setState({
                 ...state,
-                [keyName]: value || initialState[keyName]
+                [keyName]: value || initialState[keyName],
             });
         },
         [state]
@@ -30,7 +31,7 @@ const MainScreen = () => {
         cardNumber: useRef(),
         cardHolder: useRef(),
         cardDate: useRef(),
-        cardCvv: useRef()
+        cardCvv: useRef(),
     };
 
     let focusFormFieldByKey = useCallback((key) => {
@@ -41,7 +42,7 @@ const MainScreen = () => {
     let cardElementsRef = {
         cardNumber: useRef(),
         cardHolder: useRef(),
-        cardDate: useRef()
+        cardDate: useRef(),
     };
 
     let onCardFormInputFocus = (_event, inputName) => {
@@ -52,6 +53,37 @@ const MainScreen = () => {
     let onCardInputBlur = useCallback(() => {
         setCurrentFocusedElm(null);
     }, []);
+
+    const submitFormHandler = (e) => {
+        e.preventDefault();
+        // alert(state.cardNumber);
+        console.log("cardnumber", state.cardNumber.length);
+        console.log("cardHolder", state.cardHolder.match("^[a-zA-Z\(\)]+$"));
+        if (!state.cardNumber.length ||  !state.cardHolder.match("^[a-zA-Z\(\)]+$")) {
+            return alert("Please check the details again!")
+        }
+        Axios.post('https://ry8o1.sse.codesandbox.io/', {
+            cardNumber: state.cardNumber,
+            cardHolder: state.cardHolder,
+            cardMonth: state.cardMonth,
+            cardYear: state.cardYear,
+            cardCvv: state.cardCvv,
+        })
+            .then(function (response) {
+                if (response.data.error === true) {
+                    alert(response.data.message);
+                }
+                else if (response.data.error === false) {
+                    alert(response.data.message)
+                }
+                else {
+                    alert("Something went wrong!")
+                }
+            })
+            .catch(function (error) {
+                console.log(error);
+            });
+    };
 
     return (
         <div className="wrapper">
@@ -64,6 +96,7 @@ const MainScreen = () => {
                 cardDateRef={formFieldsRefObj.cardDate}
                 onCardInputFocus={onCardFormInputFocus}
                 onCardInputBlur={onCardInputBlur}
+                submitFormHandler={submitFormHandler}
             >
                 <Card
                     cardNumber={state.cardNumber}

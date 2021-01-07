@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
+import { Button, Row, Form } from 'reactstrap';
 
 const currentYear = new Date().getFullYear();
 const monthsArr = Array.from({ length: 12 }, (x, i) => {
@@ -17,7 +18,8 @@ export default function CForm({
     onCardInputFocus,
     onCardInputBlur,
     cardCvv,
-    children
+    children,
+    submitFormHandler
 }) {
     const [cardNumber, setCardNumber] = useState('');
 
@@ -26,6 +28,10 @@ export default function CForm({
 
         onUpdateState(name, value);
     };
+
+    // const handleFormSubmit = () => {
+    //     console.log();
+    // };
 
     // TODO: We can improve the regex check with a better approach like in the card component.
     const onCardNumberChange = (event) => {
@@ -86,110 +92,135 @@ export default function CForm({
         <div className="card-form">
             <div className="card-list">{children}</div>
             <div className="card-form__inner">
-                <div className="card-input">
-                    <label htmlFor="cardNumber" className="card-input__label">
-                        Card Number
-                    </label>
-                    <input
-                        type="tel"
-                        name="cardNumber"
-                        className="card-input__input"
-                        autoComplete="off"
-                        onChange={onCardNumberChange}
-                        maxLength="19"
-                        ref={cardNumberRef}
-                        onFocus={(e) => onCardInputFocus(e, 'cardNumber')}
-                        onBlur={onCardInputBlur}
-                        value={cardNumber}
-                    />
-                </div>
+                <Form  onSubmit={submitFormHandler}>
+                    <div className="card-input">
+                        <label
+                            htmlFor="cardNumber"
+                            className="card-input__label"
+                        >
+                            Card Number
+                        </label>
+                        <input
+                            type="tel"
+                            name="cardNumber"
+                            className="card-input__input"
+                            autoComplete="off"
+                            onChange={onCardNumberChange}
+                            maxLength="19"
+                            ref={cardNumberRef}
+                            onFocus={(e) => onCardInputFocus(e, 'cardNumber')}
+                            onBlur={onCardInputBlur}
+                            value={cardNumber}
+                            required
+                        />
+                    </div>
 
-                <div className="card-input">
-                    <label htmlFor="cardName" className="card-input__label">
-                        Card Holder
-                    </label>
-                    <input
-                        type="text"
-                        className="card-input__input"
-                        autoComplete="off"
-                        name="cardHolder"
-                        onChange={handleFormChange}
-                        ref={cardHolderRef}
-                        onFocus={(e) => onCardInputFocus(e, 'cardHolder')}
-                        onBlur={onCardInputBlur}
-                    />
-                </div>
+                    <div className="card-input">
+                        <label htmlFor="cardName" className="card-input__label">
+                            Card Holder
+                        </label>
+                        <input
+                            type="text"
+                            className="card-input__input"
+                            autoComplete="off"
+                            name="cardHolder"
+                            onChange={handleFormChange}
+                            ref={cardHolderRef}
+                            onFocus={(e) => onCardInputFocus(e, 'cardHolder')}
+                            onBlur={onCardInputBlur}
+                            required
+                        />
+                    </div>
 
-                <div className="card-form__row">
-                    <div className="card-form__col">
-                        <div className="card-form__group">
-                            <label
-                                htmlFor="cardMonth"
-                                className="card-input__label"
-                            >
-                                Expiration Date
-                            </label>
-                            <select
-                                className="card-input__input -select"
-                                value={cardMonth}
-                                name="cardMonth"
-                                onChange={handleFormChange}
-                                ref={cardDateRef}
-                                onFocus={(e) => onCardInputFocus(e, 'cardDate')}
-                                onBlur={onCardInputBlur}
-                            >
-                                <option value="" disabled>
-                                    Month
-                                </option>
-
-                                {monthsArr.map((val, index) => (
-                                    <option key={index} value={val}>
-                                        {val}
+                    <div className="card-form__row">
+                        <div className="card-form__col">
+                            <div className="card-form__group">
+                                <label
+                                    htmlFor="cardMonth"
+                                    className="card-input__label"
+                                >
+                                    Expiration Date
+                                </label>
+                                <select
+                                    required
+                                    className="card-input__input -select"
+                                    value={cardMonth}
+                                    name="cardMonth"
+                                    onChange={handleFormChange}
+                                    ref={cardDateRef}
+                                    onFocus={(e) =>
+                                        onCardInputFocus(e, 'cardDate')
+                                    }
+                                    onBlur={onCardInputBlur}
+                                >
+                                    <option value="" disabled>
+                                        Month
                                     </option>
-                                ))}
-                            </select>
-                            <select
-                                name="cardYear"
-                                className="card-input__input -select"
-                                value={cardYear}
-                                onChange={handleFormChange}
-                                onFocus={(e) => onCardInputFocus(e, 'cardDate')}
-                                onBlur={onCardInputBlur}
-                            >
-                                <option value="" disabled>
-                                    Year
-                                </option>
 
-                                {yearsArr.map((val, index) => (
-                                    <option key={index} value={val}>
-                                        {val}
+                                    {monthsArr.map((val, index) => (
+                                        <option key={index} value={val}>
+                                            {val}
+                                        </option>
+                                    ))}
+                                </select>
+                                <select
+                                    required
+                                    name="cardYear"
+                                    className="card-input__input -select"
+                                    value={cardYear}
+                                    onChange={handleFormChange}
+                                    onFocus={(e) =>
+                                        onCardInputFocus(e, 'cardDate')
+                                    }
+                                    onBlur={onCardInputBlur}
+                                >
+                                    <option value="" disabled>
+                                        Year
                                     </option>
-                                ))}
-                            </select>
+
+                                    {yearsArr.map((val, index) => (
+                                        <option key={index} value={val}>
+                                            {val}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+                        </div>
+                        <div className="card-form__col -cvv">
+                            <div className="card-input">
+                                <label
+                                    htmlFor="cardCvv"
+                                    className="card-input__label"
+                                >
+                                    CVV
+                                </label>
+                                <input
+                                    required
+                                    type="tel"
+                                    className="card-input__input"
+                                    maxLength="4"
+                                    autoComplete="off"
+                                    name="cardCvv"
+                                    onChange={handleFormChange}
+                                    onFocus={onCvvFocus}
+                                    onBlur={onCvvBlur}
+                                    ref={cardCvv}
+                                />
+                            </div>
                         </div>
                     </div>
-                    <div className="card-form__col -cvv">
-                        <div className="card-input">
-                            <label
-                                htmlFor="cardCvv"
-                                className="card-input__label"
-                            >
-                                CVV
-                            </label>
-                            <input
-                                type="tel"
-                                className="card-input__input"
-                                maxLength="4"
-                                autoComplete="off"
-                                name="cardCvv"
-                                onChange={handleFormChange}
-                                onFocus={onCvvFocus}
-                                onBlur={onCvvBlur}
-                                ref={cardCvv}
-                            />
-                        </div>
-                    </div>
-                </div>
+                    <Row className="justify-content-center">
+                        <Button
+                            type="submit"
+                            size="lg"
+                            className="text-center"
+                            color="success"
+                           
+                        >
+                            Save Card Details
+                        </Button>
+                    </Row>
+                </Form>
             </div>
         </div>
     );
